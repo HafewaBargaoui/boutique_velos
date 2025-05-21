@@ -8,6 +8,7 @@ import streamlit as st
 from services.product_services import get_top_products
 from utils.style import set_custom_style
 
+# Crée ma page d'acceuil
 st.set_page_config(page_title="Accueil | Boutique Vélos", layout="wide")
 set_custom_style()
 
