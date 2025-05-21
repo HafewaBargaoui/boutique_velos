@@ -1,0 +1,39 @@
+import sqlite3
+from models.product import Product  
+
+DB_PATH = "databases/ecommerce.db"
+
+class ProductService:
+
+    @staticmethod
+    def get_all_products():
+        try:
+            with sqlite3.connect(DB_PATH) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT id_product, name, description, price, stock_qty FROM product
+                """)
+                rows = cursor.fetchall()
+                return [Product(name=row[1], description=row[2], price=row[3], stock_qty=row[4], id_product=row[0]) for row in rows]
+        except sqlite3.Error as e:
+            print("Erreur SQLite :", e)
+            return []
+
+    @staticmethod
+    def get_product_by_id(product_id: int):
+        try:
+            with sqlite3.connect(DB_PATH) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT id_product, name, description, price, stock_qty FROM product
+                    WHERE id_product = ?
+                """, (product_id,))
+                row = cursor.fetchone()
+                if row:
+                    return Product(name=row[1], description=row[2], price=row[3], stock_qty=row[4], id_product=row[0])
+                else:
+                    print(f"Aucun produit trouvé avec l'ID {product_id}")
+                    return None
+        except sqlite3.Error as e:
+            print("Erreur SQLite :", e)
+            return None
