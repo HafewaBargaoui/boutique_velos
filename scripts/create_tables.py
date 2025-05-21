@@ -1,10 +1,11 @@
 import sqlite3
+import os
 
 def create_tables():
-    conn = sqlite3.connect("ecommerce.db")
+    conn = sqlite3.connect("databases/ecommerce.db")
     cursor = conn.cursor()
 
-    #utilisateurs
+    # Création des tables
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS user_(
         Id_user INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,8 +16,7 @@ def create_tables():
         vip BOOLEAN NOT NULL
     );
     """)
-
-    #admins
+    
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS admin(
         Id_user INTEGER PRIMARY KEY,
@@ -24,7 +24,6 @@ def create_tables():
     );
     """)
 
-    #admins
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS super_admin(
         Id_user INTEGER PRIMARY KEY,
@@ -32,7 +31,6 @@ def create_tables():
     );
     """)
 
-    #panier
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS cart(
         Id_cart INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,7 +38,6 @@ def create_tables():
     );
     """)
 
-    #commandes
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS order_(
         Id_order INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,7 +48,6 @@ def create_tables():
     );
     """)
 
-    #produits
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS product(
         Id_product INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,7 +58,6 @@ def create_tables():
     );
     """)
 
-    #catégories
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS category(
         Id_category INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,7 +68,6 @@ def create_tables():
     );
     """)
 
-    #Clients
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS customer(
         Id_user INTEGER PRIMARY KEY,
@@ -86,7 +80,6 @@ def create_tables():
     );
     """)
 
-    #panier
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS cart_item(
         Id_cart INTEGER,
@@ -101,9 +94,22 @@ def create_tables():
     );
     """)
 
+    # Insertion des produits exemple
+    cursor.executescript("""
+    INSERT INTO product (name, description, price, stock_qty) VALUES
+    ('Vélo de route Canyon Ultimate', 'Cadre carbone, Shimano Ultegra', 2899.99, 12),
+    ('VTT Rockrider XC 500', 'Suspension avant, 12 vitesses', 999.90, 20),
+    ('Vélo électrique Moustache Lundi 27', 'Batterie Bosch, confort urbain', 3199.00, 8),
+    ('Vélo pliant Brompton M6L', '6 vitesses, compact et léger', 1749.00, 15),
+    ('Gravel Trek Checkpoint ALR 5', 'Polyvalent, Shimano GRX', 2399.50, 10),
+    ('Vélo enfant BTWIN 16 pouces', 'Pour enfants de 4 à 6 ans', 129.99, 25),
+    ('Vélo urbain Elops 500', 'Style hollandais, 6 vitesses', 329.99, 18),
+    ('Vélo cargo Yuba Kombi', 'Transport familial ou marchandises', 1799.90, 6),
+    ('Vélo BMX Mongoose L20', 'Parfait pour skatepark et tricks', 349.95, 14),
+    ('Vélo trekking Riverside 920', 'Randonnée longue distance', 749.90, 9);
+    """)
+
     conn.commit()
     conn.close()
-    print("Tables créées avec succès")
+    print("✅ Base de données et données d'exemple créées.")
 
-if __name__ == "__main__":
-    create_tables()
