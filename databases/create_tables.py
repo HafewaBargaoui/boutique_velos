@@ -101,6 +101,16 @@ def create_tables():
     );
     """)
 
+    #image
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS image(
+        Id_image INTEGER PRIMARY KEY AUTOINCREMENT,
+        path TEXT,
+        Id_product INTEGER,
+        FOREIGN KEY(Id_product) REFERENCES product(Id_product)
+    );
+    """)
+
     conn.commit()
     conn.close()
     print("Tables créées avec succès")
