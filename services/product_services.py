@@ -1,5 +1,6 @@
 import sqlite3
 from models.product import Product  
+from models.category import Category 
 
 DB_PATH = "databases/ecommerce.db"
 
@@ -37,35 +38,17 @@ class ProductService:
         except sqlite3.Error as e:
             print("Erreur SQLite :", e)
             return None
-        
-# services/product_service.py
-from models.product import Product
-
-def get_top_products():
-    return [
-        Product(
-            id_product=1,
-            name="Vélo de Montagne",
-            description="Un VTT robuste pour les sentiers difficiles.",
-            price=599,
-            stock_qty=10,
-            id_category=1
-        ),
-        Product(
-            id_product=2,
-            name="Vélo de Route",
-            description="Léger et rapide, parfait pour la compétition.",
-            price=1299,
-            stock_qty=7,
-            id_category=1
-        ),
-        Product(
-            id_product=3,
-            name="Vélo Électrique",
-            description="Assistance électrique pour les trajets quotidiens.",
-            price=1690,
-            stock_qty=5,            image="assets/offrorad_anywhere_bike.jpg",
-
-            id_category=1
-        ),
-    ]
+    
+    @staticmethod
+    def get_all_categories():
+        try:
+            with sqlite3.connect(DB_PATH) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT id_category, name, description FROM category
+                """)
+                rows = cursor.fetchall()
+                return [Category(name=row[1], description=row[2], id_category=row[0]) for row in rows]
+        except sqlite3.Error as e:
+            print("Erreur SQLite :", e)
+            return []
