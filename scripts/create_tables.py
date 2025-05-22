@@ -64,6 +64,7 @@ def create_tables():
         description TEXT,
         price REAL NOT NULL,
         stock_qty REAL,
+        image TEXT,
         Id_category INTEGER,
         FOREIGN KEY(Id_category) REFERENCES category(Id_category)
     );
@@ -114,10 +115,7 @@ def create_tables():
         ('Urbain', 'Vélos pour usage en ville'),
         ('Pliant', 'Vélos pliants compacts'),
         ('Gravel', 'Vélos polyvalents pour route et chemins'),
-        ('Enfant', 'Vélos pour enfants'),
-        ('Cargo', 'Vélos pour transport de charges'),
-        ('BMX', 'Vélos pour acrobaties et skateparks'),
-        ('Trekking', 'Vélos pour randonnée longue distance');
+        ('Enfant', 'Vélos pour enfants');
 
         INSERT INTO product (name, description, price, stock_qty, Id_category) VALUES
         ('Vélo de route Canyon Ultimate', 'Cadre carbone, Shimano Ultegra', 2899.99, 12, 1),
@@ -133,13 +131,7 @@ def create_tables():
         ('Gravel Trek Checkpoint ALR 5', 'Polyvalent, Shimano GRX', 2399.50, 10, 6),
         ('Vélo gravel Cannondale Topstone', 'Freins à disque, pneus larges', 1999.00, 9, 6),
         ('Vélo enfant BTWIN 16 pouces', 'Pour enfants de 4 à 6 ans', 129.99, 25, 7),
-        ('Vélo enfant Orbea MX 20', 'Confort et légèreté', 299.00, 14, 7),
-        ('Vélo cargo Yuba Kombi', 'Transport familial ou marchandises', 1799.90, 6, 8),
-        ('Vélo cargo Douze G4', 'Modulable, grande capacité', 3499.00, 4, 8),
-        ('Vélo BMX Mongoose L20', 'Parfait pour skatepark et tricks', 349.95, 14, 9),
-        ('Vélo BMX Sunday Primer', 'Cadre renforcé, freestyle', 459.99, 10, 9),
-        ('Vélo trekking Riverside 920', 'Randonnée longue distance', 749.90, 9, 10),
-        ('Vélo trekking KTM Life Track', 'Dérailleur Shimano, confort optimal', 899.00, 7, 10);
+        ('Vélo enfant Orbea MX 20', 'Confort et légèreté', 299.00, 14, 7);
 
         INSERT INTO cart (total) VALUES
         (5799.98),

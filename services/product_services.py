@@ -26,7 +26,7 @@ class ProductService:
             with sqlite3.connect(DB_PATH) as conn:
                 cursor = conn.cursor()
                 cursor.execute("""
-                    SELECT id_product, name, description, price, stock_qty, id_category FROM product
+                    SELECT id_product, name, description, price, stock_qty, image, id_category FROM product
                     WHERE id_product = ?
                 """, (product_id,))
                 row = cursor.fetchone()
