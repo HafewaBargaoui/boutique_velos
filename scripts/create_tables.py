@@ -96,6 +96,15 @@ def create_tables():
     );
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS image(
+        Id_image INTEGER PRIMARY KEY AUTOINCREMENT,
+        path TEXT,
+        Id_product INTEGER,
+        FOREIGN KEY(Id_product) REFERENCES product(Id_product)
+    );
+    """)
+
     # Insertion des catégories
     cursor.executescript("""
         INSERT INTO category (name, description) VALUES
@@ -181,6 +190,28 @@ def create_tables():
         (8, 8, 20, 459.99, 1),
         (9, 9, 19, 899.00, 1),
         (10, 10, 9, 1749.00, 1);
+                         
+        INSERT INTO image (path, Id_product) VALUES
+        ('assets/all_road_siver_bullet.jpg', 1),
+        ('assets/all_road_siver_bullet.jpg', 2),
+        ('assets/all_road_siver_bullet.jpg', 3),
+        ('assets/all_road_siver_bullet.jpg', 4),
+        ('assets/all_road_siver_bullet.jpg', 5),
+        ('assets/all_road_siver_bullet.jpg', 6),
+        ('assets/all_road_siver_bullet.jpg', 7),
+        ('assets/all_road_siver_bullet.jpg', 8),
+        ('assets/all_road_siver_bullet.jpg', 9),
+        ('assets/all_road_siver_bullet.jpg', 10),
+        ('assets/all_road_siver_bullet.jpg', 11),
+        ('assets/all_road_siver_bullet.jpg', 12),
+        ('assets/all_road_siver_bullet.jpg', 13),
+        ('assets/all_road_siver_bullet.jpg', 14),
+        ('assets/all_road_siver_bullet.jpg', 15),
+        ('assets/all_road_siver_bullet.jpg', 16),
+        ('assets/all_road_siver_bullet.jpg', 17),
+        ('assets/all_road_siver_bullet.jpg', 18),
+        ('assets/all_road_siver_bullet.jpg', 19),
+        ('assets/all_road_siver_bullet.jpg', 20);                           
         """)
 
     conn.commit()
