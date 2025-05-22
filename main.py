@@ -1,10 +1,10 @@
 import os
 import streamlit as st
 from PIL import Image
+
 from scripts.create_tables import create_tables
-from services.product_services import get_top_products
 from utils.style import set_style  # style clair
-from services.category_service import get_all_categories
+from services.product_services import ProductService
 
 # Configuration de la page
 st.set_page_config(page_title="Boutique de Vélos", layout="wide")
@@ -55,7 +55,7 @@ st.markdown("""
 </h2>
 """, unsafe_allow_html=True)
 
-categories = get_all_categories()
+categories = ProductService.get_all_categories()
 
 if categories:
     cat_cols = st.columns(len(categories))
@@ -96,18 +96,18 @@ st.markdown("""
 </h1>
 """, unsafe_allow_html=True)
 
-products = get_top_products()
-cols = st.columns(3)
+#products = ProductService.get_top_products()
+#cols = st.columns(3)
 
-for col, produit in zip(cols, products):
-    with col:
-        st.image(produit.image, use_container_width=True)
-        st.markdown(f"""
-            <div class='product-card'>
-                <h4>{products.name}</h4>
-                <p>{products.description}</p>
-                <div class='product-price'> {products.price} €</div>
-                <p class='product-stock'>Stock : {products.stock_qty}</p>
-                <a class='button-link' href="/Produit?id={products.id_product}" target="_self">Voir le produit</a>
-            </div>
-        """, unsafe_allow_html=True)
+#for col, produit in zip(cols, products):
+ #   with col:
+ #       st.image(produit.image, use_container_width=True)
+ #       st.markdown(f"""
+ #           <div class='product-card'>
+ #               <h4>{products.name}</h4>
+ #               <p>{products.description}</p>
+ #               <div class='product-price'> {products.price} €</div>
+ #               <p class='product-stock'>Stock : {products.stock_qty}</p>
+ #               <a class='button-link' href="/Produit?id={products.id_product}" target="_self">Voir le produit</a>
+ #           </div>
+ #       """, unsafe_allow_html=True)
