@@ -1,5 +1,6 @@
 import sqlite3
 from models.product import Product  
+from models.category import Category 
 
 DB_PATH = "databases/ecommerce.db"
 
@@ -37,3 +38,17 @@ class ProductService:
         except sqlite3.Error as e:
             print("Erreur SQLite :", e)
             return None
+    
+    @staticmethod
+    def get_all_categories():
+        try:
+            with sqlite3.connect(DB_PATH) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT id_category, name, description FROM category
+                """)
+                rows = cursor.fetchall()
+                return [Category(name=row[1], description=row[2], id_category=row[0]) for row in rows]
+        except sqlite3.Error as e:
+            print("Erreur SQLite :", e)
+            return []
