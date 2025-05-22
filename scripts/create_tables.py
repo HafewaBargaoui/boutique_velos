@@ -64,7 +64,6 @@ def create_tables():
         description TEXT,
         price REAL NOT NULL,
         stock_qty REAL,
-        image TEXT,
         Id_category INTEGER,
         FOREIGN KEY(Id_category) REFERENCES category(Id_category)
     );
@@ -106,7 +105,7 @@ def create_tables():
     );
     """)
 
-    # Insertion des catégories
+    # Insertion des données
     cursor.executescript("""
         INSERT INTO category (name, description) VALUES
         ('Route', 'Vélos de route rapides et légers'),
@@ -116,7 +115,7 @@ def create_tables():
         ('Pliant', 'Vélos pliants compacts'),
         ('Gravel', 'Vélos polyvalents pour route et chemins'),
         ('Enfant', 'Vélos pour enfants');
-
+    
         INSERT INTO product (name, description, price, stock_qty, Id_category) VALUES
         ('Vélo de route Canyon Ultimate', 'Cadre carbone, Shimano Ultegra', 2899.99, 12, 1),
         ('Vélo route Giant TCR Advanced', 'Cadre léger, Shimano 105', 2299.00, 8, 1),
@@ -197,13 +196,7 @@ def create_tables():
         ('assets/all_road_siver_bullet.jpg', 11),
         ('assets/all_road_siver_bullet.jpg', 12),
         ('assets/all_road_siver_bullet.jpg', 13),
-        ('assets/all_road_siver_bullet.jpg', 14),
-        ('assets/all_road_siver_bullet.jpg', 15),
-        ('assets/all_road_siver_bullet.jpg', 16),
-        ('assets/all_road_siver_bullet.jpg', 17),
-        ('assets/all_road_siver_bullet.jpg', 18),
-        ('assets/all_road_siver_bullet.jpg', 19),
-        ('assets/all_road_siver_bullet.jpg', 20);                           
+        ('assets/all_road_siver_bullet.jpg', 14);                          
         """)
 
     conn.commit()
