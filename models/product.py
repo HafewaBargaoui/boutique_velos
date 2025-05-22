@@ -1,13 +1,14 @@
 import sqlite3
 DB_PATH = "databases/ecommerce.db"
 class Product:
-    def __init__(self, name, description, price, stock_qty, id_category, id_product=None):
+    def __init__(self, name, description, price, stock_qty, id_category, id_product=None, path=None):
         self.id_product = id_product
         self.name = name
         self.description = description
         self.price = price
         self.stock_qty = stock_qty
         self.id_category = id_category
+        self.path = path
 
     def add_product(self):
         try:
