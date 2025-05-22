@@ -96,18 +96,17 @@ st.markdown("""
 </h1>
 """, unsafe_allow_html=True)
 
-#products = ProductService.get_top_products()
-#cols = st.columns(3)
+products = ProductService.get_top_products()
+cols = st.columns(3)
 
-#for col, produit in zip(cols, products):
- #   with col:
- #       st.image(produit.image, use_container_width=True)
- #       st.markdown(f"""
- #           <div class='product-card'>
- #               <h4>{products.name}</h4>
- #               <p>{products.description}</p>
- #               <div class='product-price'> {products.price} €</div>
- #               <p class='product-stock'>Stock : {products.stock_qty}</p>
- #               <a class='button-link' href="/Produit?id={products.id_product}" target="_self">Voir le produit</a>
- #           </div>
- #       """, unsafe_allow_html=True)
+for col, product in zip(cols, products):
+    with col:
+        st.markdown(f"""
+            <div class='product-card'>
+                <h4>{product.name}</h4>
+                <p>{product.description}</p>
+                <div class='product-price'> {product.price} €</div>
+                <p class='product-stock'>Stock : {product.stock_qty}</p>
+                <a class='button-link' href="/product?id={product.id_product}" target="_self">Voir le produit</a>
+            </div>
+        """, unsafe_allow_html=True)
