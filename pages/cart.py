@@ -1,5 +1,5 @@
 import streamlit as st
-from services.product_services import ProductService  # Assure-toi du bon nom de fichier ici
+from services.product_services import ProductService  
 
 st.set_page_config(page_title="Mon panier", page_icon="🛒")
 
