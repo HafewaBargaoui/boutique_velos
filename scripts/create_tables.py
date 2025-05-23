@@ -63,7 +63,7 @@ def create_tables():
         name TEXT,
         description TEXT,
         price REAL NOT NULL,
-        stock_qty REAL,
+        stock_qty INT,
         Id_category INTEGER,
         FOREIGN KEY(Id_category) REFERENCES category(Id_category)
     );
