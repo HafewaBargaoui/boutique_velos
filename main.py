@@ -62,7 +62,7 @@ if categories:
     for col, cat in zip(cat_cols, categories):
         with col:
             st.markdown(f"""
-                <a href="/Catalogue?id_category={cat['id']}" target="_self" style="text-decoration: none;">
+                <a href="/Catalogue?id_category={cat.id_category}" target="_self" style="text-decoration: none;">
                     <div style='
                         background-color: #ffffff;
                         border-radius: 14px;
@@ -71,8 +71,8 @@ if categories:
                         padding: 16px;
                         transition: transform 0.2s ease;
                     '>
-                        <img src="{cat['image']}" style="width:100%; border-radius:10px;" />
-                        <h4 style="color: #111; margin-top: 12px;">{cat['name']}</h4>
+                        <img src="{cat.image_url}" style="width:100%; border-radius:10px;" />
+                        <h4 style="color: #111; margin-top: 12px;">{cat.name}</h4>
                     </div>
                 </a>
             """, unsafe_allow_html=True)
