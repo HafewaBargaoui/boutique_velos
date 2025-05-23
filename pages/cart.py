@@ -1,9 +1,16 @@
 import streamlit as st
-from services.product_services import ProductService  
+from services.product_services import ProductService
+from utils.style import set_style   
+
 
 st.set_page_config(page_title="Mon panier", page_icon="🛒")
 
+if st.button("Retour à l'accueil"):
+    st.switch_page("main.py") 
+
 st.title("🛒 Mon panier")
+
+set_style()
 
 # Initialiser le panier dans la session si besoin
 if "cart" not in st.session_state:
