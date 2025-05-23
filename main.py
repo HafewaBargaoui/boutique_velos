@@ -66,7 +66,7 @@ if categories:
         with col:
             st.image(img)
             st.markdown(f"""
-                <a href="/Catalogue?id_category={cat.id_category}" target="_self" style="text-decoration: none;">
+                <a href="/catalogue?id_category={cat.id_category}" target="_self" style="text-decoration: none;">
                     <div style='
                         background-color: #ffffff;
                         border-radius: 14px;
