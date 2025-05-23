@@ -110,3 +110,7 @@ for col, product in zip(cols, products):
                 <a class='button-link' href="/product?id={product.id_product}" target="_self">Voir le produit</a>
             </div>
         """, unsafe_allow_html=True)
+
+#Gestion du panier
+if "cart" not in st.session_state:
+    st.session_state.cart = []
