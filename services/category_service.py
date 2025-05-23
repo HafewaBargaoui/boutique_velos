@@ -20,3 +20,4 @@ class CategoryService:
             return result[0]
         else:
             return "Catégorie inconnue"
+        

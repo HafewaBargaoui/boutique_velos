@@ -63,9 +63,10 @@ class ProductService:
                 cursor.execute("""
                     SELECT 
                         p.id_product, p.name, p.description, p.price, p.stock_qty, p.id_category,
-                        SUM(CAST(ci.qty AS INTEGER)) as total_sold
+                        SUM(CAST(ci.qty AS INTEGER)) as total_sold, path
                     FROM product p
                     JOIN cart_item ci ON p.id_product = ci.id_product
+                    JOIN image  ON p.id_product = image.id_product
                     GROUP BY p.id_product
                     ORDER BY total_sold DESC
                     LIMIT ?
@@ -78,7 +79,8 @@ class ProductService:
                         price=row[3],
                         stock_qty=row[4],
                         id_category=row[5],
-                        id_product=row[0]
+                        id_product=row[0],
+                        path=row[6]
                     )
                     for row in rows
                 ]
@@ -119,3 +121,30 @@ class ProductService:
         except sqlite3.Error as e:
             print("Erreur SQLite :", e)
             return []
+        
+    @staticmethod
+    def get_product_image_by_id(product_id):
+        """
+        Récupère l'URL ou le chemin de l'image d'un produit en interrogeant les tables image et product.
+        """
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT image.path
+                FROM product
+                JOIN image ON product.id_product = image.id_product
+                WHERE product.id_product = ?
+            """, (product_id,))
+            
+            result = cursor.fetchone()
+            conn.close()
+
+            if result:
+                return result[0]
+            else:
+                return None
+
+        except Exception as e:
+            print("Erreur lors de la récupération de l'image :", e)
+            return None

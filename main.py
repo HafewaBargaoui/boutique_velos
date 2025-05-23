@@ -104,10 +104,16 @@ products = ProductService.get_top_products()
 cols = st.columns(3)
 
 for col, product in zip(cols, products):
-    cat_name = CategoryService.get_category_name_by_id(product.id_category)
-    img = f"./assets/image_category/{cat_name}.png"
     with col:
-        st.image(img)
+        try:
+            picture_path = ProductService.get_product_image_by_id(product.id_product)
+            if picture_path and os.path.exists(picture_path):
+                picture = Image.open(picture_path)
+                st.image(picture, use_container_width=True)
+            else:
+                st.warning(f"Image introuvable pour le produit : {product.name}")
+        except Exception as e:
+            st.error(f"Erreur lors de l'ouverture de l'image : {e}")
         st.markdown(f"""
             <div class='product-card'>
                 <h4>{product.name}</h4>
