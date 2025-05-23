@@ -117,15 +117,15 @@ def create_tables():
         ('Enfant', 'Vélos pour enfants');
     
         INSERT INTO product (name, description, price, stock_qty, Id_category) VALUES
-        ('Vélo de route Canyon Ultimate', 'Cadre carbone, Shimano Ultegra', 2899.99, 12, 1),
-        ('Vélo route Giant TCR Advanced', 'Cadre léger, Shimano 105', 2299.00, 8, 1),
-        ('VTT Rockrider XC 500', 'Suspension avant, 12 vitesses', 999.90, 20, 2),
-        ('VTT Trek Marlin 7', 'Cadre alu, freins à disque', 849.90, 15, 2),
+        ('Vélo de route Canyon Ultimate', 'Cadre carbone, Shimano Ultegra', 2899.99, 1, 1),
+        ('Vélo route Giant TCR Advanced', 'Cadre léger, Shimano 105', 2299.00, 2, 1),
+        ('VTT Rockrider XC 500', 'Suspension avant, 12 vitesses', 999.90, 1, 2),
+        ('VTT Trek Marlin 7', 'Cadre alu, freins à disque', 849.90, 7, 2),
         ('Vélo électrique Moustache Lundi 27', 'Batterie Bosch, confort urbain', 3199.00, 8, 3),
         ('Vélo électrique Cowboy 4', 'Design épuré, moteur intégré', 2499.00, 6, 3),
         ('Vélo urbain Elops 500', 'Style hollandais, 6 vitesses', 329.99, 18, 4),
         ('Vélo urbain Electra Loft 7D', 'Guidon droit, confortable', 599.00, 10, 4),
-        ('Vélo pliant Brompton M6L', '6 vitesses, compact et léger', 1749.00, 15, 5),
+        ('Vélo pliant Brompton M6L', '6 vitesses, compact et léger', 1749.00, 20, 5),
         ('Vélo pliant Tilt 500', 'Facile à plier, léger', 379.99, 12, 5),
         ('Gravel Trek Checkpoint ALR 5', 'Polyvalent, Shimano GRX', 2399.50, 10, 6),
         ('Vélo gravel Cannondale Topstone', 'Freins à disque, pneus larges', 1999.00, 9, 6),
@@ -184,7 +184,7 @@ def create_tables():
                          
         INSERT INTO image (path, Id_product) VALUES
         ('assets/all_road_siver_bullet.jpg', 1),
-        ('assets/all_road_siver_bullet.jpg', 2),
+        ('assets/classic_road_bike.jpg', 2),
         ('assets/all_road_siver_bullet.jpg', 3),
         ('assets/all_road_siver_bullet.jpg', 4),
         ('assets/all_road_siver_bullet.jpg', 5),

@@ -60,5 +60,25 @@ def set_style():
             border-radius: 6px;
             font-weight: bold;
         }
+                
+        .product-card-full {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0px;
+            margin-top: 10px;
+            text-align: center;
+            overflow: hidden;
+                
+        }
+        
+        img {
+             margin-bottom: 0;
+            display: block;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            }
+
+
     </style>
     """, unsafe_allow_html=True)

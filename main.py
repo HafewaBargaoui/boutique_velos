@@ -42,6 +42,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Section Catégories
+
 st.markdown("""
 <h2 style='
     text-align: center;
@@ -79,11 +80,12 @@ if categories:
 else:
     st.warning("Aucune catégorie trouvée.")
 
-
 # Espace après la bannière
+
 st.markdown("<br><br><br><br>", unsafe_allow_html=True)
 
 # Section Produits Populaires
+
 st.markdown("""
 <h1 style='
     text-align: center;
@@ -110,3 +112,38 @@ for col, product in zip(cols, products):
                 <a class='button-link' href="/product?id={product.id_product}" target="_self">Voir le produit</a>
             </div>
         """, unsafe_allow_html=True)
+
+# Section Stock Limité
+
+st.markdown("""
+<h1 style='
+    text-align: center;
+    color: #000000;
+    font-size: 2.6em;
+    margin-top: 40px;
+    margin-bottom: 20px;
+'>
+    Stock limité
+</h1>
+""", unsafe_allow_html=True)
+
+products = ProductService.get_limited_stock_products()
+
+for i in range(0, len(products), 3):
+    cols = st.columns(3)
+    for col, product in zip(cols, products[i:i+3]):
+        with col:
+            try:
+                img = Image.open(product.path)
+                st.image(img, use_container_width=True)
+            except FileNotFoundError:
+                st.warning(f"Image introuvable : {product.path}")
+            st.markdown(f"""
+                <div class='product-card'>
+                    <h4>{product.name}</h4>
+                    <p>{product.description}</p>
+                    <div class='product-price'> {product.price} €</div>
+                    <p class='product-stock'>Stock : {product.stock_qty}</p>
+                    <a class='button-link' href="/product?id={product.id_product}" target="_self">Voir le produit</a>
+                </div>
+            """, unsafe_allow_html=True)
