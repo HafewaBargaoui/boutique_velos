@@ -5,6 +5,7 @@ from PIL import Image
 from scripts.create_tables import create_tables
 from utils.style import set_style  # style clair
 from services.product_services import ProductService
+from services.category_service import CategoryService
 
 # Configuration de la page
 st.set_page_config(page_title="Boutique de Vélos", layout="wide")
@@ -61,7 +62,9 @@ categories = ProductService.get_all_categories()
 if categories:
     cat_cols = st.columns(len(categories))
     for col, cat in zip(cat_cols, categories):
+        img = f"./assets/image_category/{cat.name}.png"
         with col:
+            st.image(img)
             st.markdown(f"""
                 <a href="/Catalogue?id_category={cat.id_category}" target="_self" style="text-decoration: none;">
                     <div style='
@@ -72,7 +75,6 @@ if categories:
                         padding: 16px;
                         transition: transform 0.2s ease;
                     '>
-                        <img src="{cat.image_url}" style="width:100%; border-radius:10px;" />
                         <h4 style="color: #111; margin-top: 12px;">{cat.name}</h4>
                     </div>
                 </a>
@@ -102,7 +104,10 @@ products = ProductService.get_top_products()
 cols = st.columns(3)
 
 for col, product in zip(cols, products):
+    cat_name = CategoryService.get_category_name_by_id(product.id_category)
+    img = f"./assets/image_category/{cat_name}.png"
     with col:
+        st.image(img)
         st.markdown(f"""
             <div class='product-card'>
                 <h4>{product.name}</h4>
