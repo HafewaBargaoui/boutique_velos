@@ -15,6 +15,7 @@ class ProductService:
                 SELECT p.id_product, p.name, p.description, p.price, p.stock_qty, p.id_category, i.path 
                 FROM product p 
                 LEFT JOIN image i ON p.id_product = i.id_product
+                WHERE stock_qty > 0                
             """)
                 rows = cursor.fetchall()
                 return [Product(name=row[1], description=row[2], price=row[3], stock_qty=row[4],id_category=row[5], path=row[6], id_product=row[0]) for row in rows]
@@ -67,6 +68,7 @@ class ProductService:
                     FROM product p
                     JOIN cart_item ci ON p.id_product = ci.id_product
                     JOIN image  ON p.id_product = image.id_product
+                    WHERE p.stock_qty > 0
                     GROUP BY p.id_product
                     ORDER BY total_sold DESC
                     LIMIT ?
@@ -100,6 +102,7 @@ class ProductService:
                     FROM product p
                     JOIN image i ON p.id_product = i.id_product
                 WHERE p.stock_qty <= ?
+                and p.stock_qty > 0
                 """, (min_stock,))
                 rows = cursor.fetchall()
             if rows:
@@ -160,7 +163,8 @@ class ProductService:
                         p.id_category, i.path
                     FROM product p
                     LEFT JOIN image i ON p.id_product = i.id_product
-                WHERE p.id_category = ?
+                WHERE p.id_category = ? AND p.stock_qty > 0
+                
                 """, (category_id,))
                 rows = cursor.fetchall()
             if rows:
