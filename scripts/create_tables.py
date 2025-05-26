@@ -100,6 +100,7 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS image(
         Id_image INTEGER PRIMARY KEY AUTOINCREMENT,
         path TEXT,
+        is_main INTEGER DEFAULT 0,
         Id_product INTEGER,
         FOREIGN KEY(Id_product) REFERENCES product(Id_product)
     );
@@ -182,21 +183,21 @@ def create_tables():
         (9, 9, 19, 899.00, 1),
         (10, 10, 9, 1749.00, 1);
                          
-        INSERT INTO image (path, Id_product) VALUES
-        ('assets/all_road_siver_bullet.jpg', 1),
-        ('assets/classic_road_bike.jpg', 2),
-        ('assets/all_road_siver_bullet.jpg', 3),
-        ('assets/all_road_siver_bullet.jpg', 4),
-        ('assets/all_road_siver_bullet.jpg', 5),
-        ('assets/all_road_siver_bullet.jpg', 6),
-        ('assets/all_road_siver_bullet.jpg', 7),
-        ('assets/all_road_siver_bullet.jpg', 8),
-        ('assets/all_road_siver_bullet.jpg', 9),
-        ('assets/all_road_siver_bullet.jpg', 10),
-        ('assets/all_road_siver_bullet.jpg', 11),
-        ('assets/all_road_siver_bullet.jpg', 12),
-        ('assets/all_road_siver_bullet.jpg', 13),
-        ('assets/all_road_siver_bullet.jpg', 14);                          
+        INSERT INTO image (path, is_main, Id_product) VALUES  
+        ('assets/image_product/vr_canyon_ultimat2.png',1 , 1),
+        ('assets/image_product/vr_giant_tcradvanced2.png',1 , 2),
+        ('assets/image_product/vtt_rockriderxc500_1.png',1 , 3),
+        ('assets/image_product/vtt_trek_marlin7_1.png',1 , 4),
+        ('assets/image_product/ve_moustachelundi27_1.png',1 , 5),
+        ('assets/image_product/ve_cowboy4_1.png',1 , 6),
+        ('assets/image_product/vu_ulops_500_1.png',1 , 7),
+        ('assets/image_product/vu_electraloft7d_1.png',1 , 8),
+        ('assets/image_product/vp_bromptonm6l_1.png',1 , 9),
+        ('assets/image_product/vp_tilt500_1.png',1 , 10),
+        ('assets/image_product/gravel_trek_checkpointARL5_1.png',1 , 11),
+        ('assets/image_product/gravel_cannondale_topstone1.png',1 , 12),
+        ('assets/image_product/venf_btwn16 pouces_1.png',1 , 13),
+        ('assets/image_product/venf_orbeamx20_2.png',1 , 14);                          
         """)
 
     conn.commit()
