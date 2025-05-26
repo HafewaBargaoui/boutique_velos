@@ -63,17 +63,18 @@ class ProductAdminService:
         with sqlite3.connect(DB_PATH) as conn:
             return pd.read_sql_query("""
                 SELECT 
-                    o.id_order AS id_order,
-                    o.order_date AS order_date,
-                    o.status AS status,
-                    o.total_amount AS total_amount,
-                    o.shipping_adress AS shipping_adress,
-                    u.username AS username,
-                    u.email AS email
+                    o.Id_order AS id_order,
+                    o.order_date,
+                    o.status,
+                    o.total_amount,
+                    o.shipping_adress,
+                    u.username,
+                    u.email
                 FROM order_ o
-                JOIN customer c ON o.id_order = c.id_order
-                JOIN user_ u ON c.id_user = u.id_user
+                JOIN user_ u ON o.Id_user = u.Id_user
+                ORDER BY o.order_date DESC
             """, conn)
+
 
     @staticmethod
     def get_order_details(order_id):
