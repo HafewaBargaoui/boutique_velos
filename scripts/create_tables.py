@@ -1,0 +1,219 @@
+import sqlite3
+import os
+
+def create_tables():
+    conn = sqlite3.connect("databases/ecommerce.db")
+    cursor = conn.cursor()
+
+    # Création des tables
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user_(
+        Id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        user_type TEXT NOT NULL,
+        vip BOOLEAN NOT NULL
+    );
+    """)
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS admin(
+        Id_user INTEGER PRIMARY KEY,
+        FOREIGN KEY(Id_user) REFERENCES user_(Id_user)
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS super_admin(
+        Id_user INTEGER PRIMARY KEY,
+        FOREIGN KEY(Id_user) REFERENCES admin(Id_user)
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS cart(
+        Id_cart INTEGER PRIMARY KEY AUTOINCREMENT,
+        total REAL
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS order_(
+        Id_order INTEGER PRIMARY KEY AUTOINCREMENT,
+        order_date TEXT,
+        status TEXT,
+        total_amount REAL NOT NULL,
+        shipping_adress TEXT NOT NULL,
+        Id_user INTEGER NOT NULL,
+        FOREIGN KEY(Id_user) REFERENCES user_(Id_user)
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS category(
+        Id_category INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE,
+        description TEXT
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS product(
+        Id_product INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        description TEXT,
+        price REAL NOT NULL,
+        stock_qty INT,
+        Id_category INTEGER,
+        FOREIGN KEY(Id_category) REFERENCES category(Id_category)
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS customer(
+        Id_user INTEGER PRIMARY KEY,
+        address TEXT NOT NULL,
+        Id_cart INTEGER NOT NULL UNIQUE,
+        Id_order INTEGER NOT NULL UNIQUE,
+        FOREIGN KEY(Id_user) REFERENCES user_(Id_user),
+        FOREIGN KEY(Id_cart) REFERENCES cart(Id_cart),
+        FOREIGN KEY(Id_order) REFERENCES order_(Id_order)
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS cart_item(
+        Id_cart INTEGER,
+        Id_order INTEGER,
+        Id_product INTEGER,
+        subtotal TEXT,
+        qty TEXT,
+        PRIMARY KEY(Id_cart, Id_order, Id_product),
+        FOREIGN KEY(Id_cart) REFERENCES cart(Id_cart),
+        FOREIGN KEY(Id_order) REFERENCES order_(Id_order),
+        FOREIGN KEY(Id_product) REFERENCES product(Id_product)
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS image(
+        Id_image INTEGER PRIMARY KEY AUTOINCREMENT,
+        path TEXT,
+        is_main INTEGER DEFAULT 0,
+        Id_product INTEGER,
+        FOREIGN KEY(Id_product) REFERENCES product(Id_product)
+    );
+    """)
+
+    # Insertion des données
+    cursor.executescript("""
+        INSERT INTO user_ (username, email, password, user_type, vip) VALUES
+        ('alice', 'alice@example.com', 'password1', 'customer', 0),
+        ('bob', 'bob@example.com', 'password2', 'customer', 0),
+        ('charlie', 'charlie@example.com', 'password3', 'customer', 1),
+        ('david', 'david@example.com', 'password4', 'customer', 0),
+        ('eve', 'eve@example.com', 'password5', 'customer', 0),
+        ('frank', 'frank@example.com', 'password6', 'customer', 0),
+        ('grace', 'grace@example.com', 'customer7', 'customer', 0),
+        ('heidi', 'heidi@example.com', 'password8', 'customer', 1),
+        ('ivan', 'ivan@example.com', 'password9', 'customer', 0),
+        ('judy', 'judy@example.com', 'password10', 'customer', 0);
+                         
+
+        INSERT INTO category (name, description) VALUES
+        ('Route', 'Vélos de route rapides et légers'),
+        ('VTT', 'Vélos tout terrain robustes'),
+        ('Electrique', 'Vélos à assistance électrique'),
+        ('Urbain', 'Vélos pour usage en ville'),
+        ('Pliant', 'Vélos pliants compacts'),
+        ('Gravel', 'Vélos polyvalents pour route et chemins'),
+        ('Enfant', 'Vélos pour enfants');
+    
+        INSERT INTO product (name, description, price, stock_qty, Id_category) VALUES
+        ('Vélo de route Canyon Ultimate', 'Cadre carbone, Shimano Ultegra', 2899.99, 1, 1),
+        ('Vélo route Giant TCR Advanced', 'Cadre léger, Shimano 105', 2299.00, 2, 1),
+        ('VTT Rockrider XC 500', 'Suspension avant, 12 vitesses', 999.90, 1, 2),
+        ('VTT Trek Marlin 7', 'Cadre alu, freins à disque', 849.90, 7, 2),
+        ('Vélo électrique Moustache Lundi 27', 'Batterie Bosch, confort urbain', 3199.00, 8, 3),
+        ('Vélo électrique Cowboy 4', 'Design épuré, moteur intégré', 2499.00, 6, 3),
+        ('Vélo urbain Elops 500', 'Style hollandais, 6 vitesses', 329.99, 18, 4),
+        ('Vélo urbain Electra Loft 7D', 'Guidon droit, confortable', 599.00, 10, 4),
+        ('Vélo pliant Brompton M6L', '6 vitesses, compact et léger', 1749.00, 20, 5),
+        ('Vélo pliant Tilt 500', 'Facile à plier, léger', 379.99, 12, 5),
+        ('Gravel Trek Checkpoint ALR 5', 'Polyvalent, Shimano GRX', 2399.50, 10, 6),
+        ('Vélo gravel Cannondale Topstone', 'Freins à disque, pneus larges', 1999.00, 9, 6),
+        ('Vélo enfant BTWIN 16 pouces', 'Pour enfants de 4 à 6 ans', 129.99, 25, 7),
+        ('Vélo enfant Orbea MX 20', 'Confort et légèreté', 299.00, 14, 7);
+
+        INSERT INTO cart (total) VALUES
+        (5799.98),
+        (2199.90),
+        (2899.00),
+        (3499.00),
+        (1599.00),
+        (899.99),
+        (399.00),
+        (3400.00),
+        (3299.00),
+        (1749.00);
+
+        INSERT INTO order_ (order_date, status, total_amount, shipping_adress, Id_user) VALUES
+        ('2024-05-01', 'delivered', 5799.98, '123 rue Exemple, Paris', 1),
+        ('2024-05-02', 'shipped', 2199.90, '456 avenue Exemple, Lyon', 2),
+        ('2024-05-03', 'pending', 2899.00, '789 boulevard Exemple, Marseille', 3),
+        ('2024-05-04', 'delivered', 3499.00, '147 rue Exemple, Toulouse', 4),
+        ('2024-05-05', 'delivered', 1599.00, '258 avenue Exemple, Nantes', 5),
+        ('2024-05-06', 'cancelled', 899.99, '369 boulevard Exemple, Lille', 6),
+        ('2024-05-07', 'delivered', 399.00, '741 rue Exemple, Bordeaux', 7),
+        ('2024-05-08', 'delivered', 3400.00, '852 avenue Exemple, Strasbourg', 8),
+        ('2024-05-09', 'pending', 3299.00, '963 boulevard Exemple, Nice', 9),
+        ('2024-05-10', 'shipped', 1749.00, '357 rue Exemple, Grenoble', 10);
+                         
+                         
+        INSERT INTO customer (Id_user, address, Id_cart, Id_order) VALUES
+        (1, '123 rue Exemple, Paris', 1, 1),
+        (2, '456 avenue Exemple, Lyon', 2, 2),
+        (3, '789 boulevard Exemple, Marseille', 3, 3),
+        (4, '147 rue Exemple, Toulouse', 4, 4),
+        (5, '258 avenue Exemple, Nantes', 5, 5),
+        (6, '369 boulevard Exemple, Lille', 6, 6),
+        (7, '741 rue Exemple, Bordeaux', 7, 7),
+        (8, '852 avenue Exemple, Strasbourg', 8, 8),
+        (9, '963 boulevard Exemple, Nice', 9, 9),
+        (10, '357 rue Exemple, Grenoble', 10, 10);
+
+        INSERT INTO cart_item (Id_cart, Id_order, Id_product, subtotal, qty) VALUES
+        (1, 1, 1, 5799.98, 2),
+        (2, 2, 3, 999.90, 1),
+        (2, 2, 13, 129.99, 1),
+        (3, 3, 5, 3199.00, 1),
+        (4, 4, 9, 1749.00, 1),
+        (4, 4, 11, 2399.50, 1),
+        (5, 5, 2, 2299.00, 1),
+        (6, 6, 4, 849.90, 1),
+        (7, 7, 14, 299.00, 1),
+        (8, 8, 20, 459.99, 1),
+        (9, 9, 19, 899.00, 1),
+        (10, 10, 9, 1749.00, 1);
+                         
+        INSERT INTO image (path, is_main, Id_product) VALUES  
+        ('assets/image_product/vr_canyon_ultimat2.png',1 , 1),
+        ('assets/image_product/vr_giant_tcradvanced2.png',1 , 2),
+        ('assets/image_product/vtt_rockriderxc500_1.png',1 , 3),
+        ('assets/image_product/vtt_trek_marlin7_1.png',1 , 4),
+        ('assets/image_product/ve_moustachelundi27_1.png',1 , 5),
+        ('assets/image_product/ve_cowboy4_1.png',1 , 6),
+        ('assets/image_product/vu_ulops_500_1.png',1 , 7),
+        ('assets/image_product/vu_electraloft7d_1.png',1 , 8),
+        ('assets/image_product/vp_bromptonm6l_1.png',1 , 9),
+        ('assets/image_product/vp_tilt500_1.png',1 , 10),
+        ('assets/image_product/gravel_trek_checkpointARL5_1.png',1 , 11),
+        ('assets/image_product/gravel_cannondale_topstone1.png',1 , 12),
+        ('assets/image_product/venf_btwn16 pouces_1.png',1 , 13),
+        ('assets/image_product/venf_orbeamx20_2.png',1 , 14);                          
+        """)
+
+    conn.commit()
+    conn.close()
+    print("✅ Base de données corrigée et remplie avec catégories & produits liés.")
