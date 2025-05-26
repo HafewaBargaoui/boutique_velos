@@ -51,14 +51,17 @@ class Cart:
             cursor.execute("INSERT INTO cart (total) VALUES (?)", (0,))
             cart_id = cursor.lastrowid
 
-            # Création de la commande
+            # Informations utilisateur (fictif ici)
+            user_id = 98
+
+            # Création de la commande avec Id_user
             order_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             status = "pending"
             shipping_address = "10 rue de test, Paris"
             total_amount = 0
             cursor.execute(
-                "INSERT INTO order_ (order_date, status, total_amount, shipping_adress) VALUES (?, ?, ?, ?)",
-                (order_date, status, total_amount, shipping_address)
+                "INSERT INTO order_ (order_date, status, total_amount, shipping_adress, Id_user) VALUES (?, ?, ?, ?, ?)",
+                (order_date, status, total_amount, shipping_address, user_id)
             )
             order_id = cursor.lastrowid
 
@@ -98,8 +101,6 @@ class Cart:
             cursor.execute("UPDATE cart SET total = ? WHERE Id_cart = ?", (total, cart_id))
             cursor.execute("UPDATE order_ SET total_amount = ? WHERE Id_order = ?", (total, order_id))
 
-            # Informations utilisateur (fictif ici)
-            user_id = 98
             cursor.execute("INSERT OR IGNORE INTO user_ (Id_user, username, email, password, user_type, vip) VALUES (?, ?, ?, ?, ?, ?)",
                         (user_id, 'john doe', 'john@example.com', 'hashed_password', 'customer', False))
 
@@ -124,3 +125,4 @@ class Cart:
                 conn.rollback()
                 conn.close()
             return False, f"Erreur lors de la commande : {e}"
+

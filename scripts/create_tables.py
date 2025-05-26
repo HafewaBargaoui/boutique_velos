@@ -44,7 +44,9 @@ def create_tables():
         order_date TEXT,
         status TEXT,
         total_amount REAL NOT NULL,
-        shipping_adress TEXT NOT NULL
+        shipping_adress TEXT NOT NULL,
+        Id_user INTEGER NOT NULL,
+        FOREIGN KEY(Id_user) REFERENCES user_(Id_user)
     );
     """)
 
@@ -55,7 +57,6 @@ def create_tables():
         description TEXT
     );
     """)
-
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS product(
@@ -69,16 +70,15 @@ def create_tables():
     );
     """)
 
-
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS customer(
         Id_user INTEGER PRIMARY KEY,
         address TEXT NOT NULL,
-        Id_order INTEGER NOT NULL,
         Id_cart INTEGER NOT NULL UNIQUE,
+        Id_order INTEGER NOT NULL UNIQUE,
         FOREIGN KEY(Id_user) REFERENCES user_(Id_user),
-        FOREIGN KEY(Id_order) REFERENCES order_(Id_order),
-        FOREIGN KEY(Id_cart) REFERENCES cart(Id_cart)
+        FOREIGN KEY(Id_cart) REFERENCES cart(Id_cart),
+        FOREIGN KEY(Id_order) REFERENCES order_(Id_order)
     );
     """)
 
@@ -108,6 +108,19 @@ def create_tables():
 
     # Insertion des données
     cursor.executescript("""
+        INSERT INTO user_ (username, email, password, user_type, vip) VALUES
+        ('alice', 'alice@example.com', 'password1', 'customer', 0),
+        ('bob', 'bob@example.com', 'password2', 'customer', 0),
+        ('charlie', 'charlie@example.com', 'password3', 'customer', 1),
+        ('david', 'david@example.com', 'password4', 'customer', 0),
+        ('eve', 'eve@example.com', 'password5', 'customer', 0),
+        ('frank', 'frank@example.com', 'password6', 'customer', 0),
+        ('grace', 'grace@example.com', 'customer7', 'customer', 0),
+        ('heidi', 'heidi@example.com', 'password8', 'customer', 1),
+        ('ivan', 'ivan@example.com', 'password9', 'customer', 0),
+        ('judy', 'judy@example.com', 'password10', 'customer', 0);
+                         
+
         INSERT INTO category (name, description) VALUES
         ('Route', 'Vélos de route rapides et légers'),
         ('VTT', 'Vélos tout terrain robustes'),
@@ -145,19 +158,20 @@ def create_tables():
         (3299.00),
         (1749.00);
 
-        INSERT INTO order_ (order_date, status, total_amount, shipping_adress) VALUES
-        ('2024-05-01', 'delivered', 5799.98, '123 rue Exemple, Paris'),
-        ('2024-05-02', 'shipped', 2199.90, '456 avenue Exemple, Lyon'),
-        ('2024-05-03', 'pending', 2899.00, '789 boulevard Exemple, Marseille'),
-        ('2024-05-04', 'delivered', 3499.00, '147 rue Exemple, Toulouse'),
-        ('2024-05-05', 'delivered', 1599.00, '258 avenue Exemple, Nantes'),
-        ('2024-05-06', 'cancelled', 899.99, '369 boulevard Exemple, Lille'),
-        ('2024-05-07', 'delivered', 399.00, '741 rue Exemple, Bordeaux'),
-        ('2024-05-08', 'delivered', 3400.00, '852 avenue Exemple, Strasbourg'),
-        ('2024-05-09', 'pending', 3299.00, '963 boulevard Exemple, Nice'),
-        ('2024-05-10', 'shipped', 1749.00, '357 rue Exemple, Grenoble');
-
-        INSERT INTO customer (Id_user, address, Id_order, Id_cart) VALUES
+        INSERT INTO order_ (order_date, status, total_amount, shipping_adress, Id_user) VALUES
+        ('2024-05-01', 'delivered', 5799.98, '123 rue Exemple, Paris', 1),
+        ('2024-05-02', 'shipped', 2199.90, '456 avenue Exemple, Lyon', 2),
+        ('2024-05-03', 'pending', 2899.00, '789 boulevard Exemple, Marseille', 3),
+        ('2024-05-04', 'delivered', 3499.00, '147 rue Exemple, Toulouse', 4),
+        ('2024-05-05', 'delivered', 1599.00, '258 avenue Exemple, Nantes', 5),
+        ('2024-05-06', 'cancelled', 899.99, '369 boulevard Exemple, Lille', 6),
+        ('2024-05-07', 'delivered', 399.00, '741 rue Exemple, Bordeaux', 7),
+        ('2024-05-08', 'delivered', 3400.00, '852 avenue Exemple, Strasbourg', 8),
+        ('2024-05-09', 'pending', 3299.00, '963 boulevard Exemple, Nice', 9),
+        ('2024-05-10', 'shipped', 1749.00, '357 rue Exemple, Grenoble', 10);
+                         
+                         
+        INSERT INTO customer (Id_user, address, Id_cart, Id_order) VALUES
         (1, '123 rue Exemple, Paris', 1, 1),
         (2, '456 avenue Exemple, Lyon', 2, 2),
         (3, '789 boulevard Exemple, Marseille', 3, 3),
