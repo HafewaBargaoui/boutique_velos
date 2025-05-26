@@ -2,12 +2,17 @@ import streamlit as st
 from PIL import Image
 from services.product_services import ProductService
 from services.category_service import CategoryService
+from utils.style import set_style
 
 st.set_page_config(page_title="Catalogue", layout="wide")
+set_style()
 
 query_params = st.query_params
 raw_category = query_params.get("id_category", [None])[0]
 id_category = int(raw_category) if raw_category and raw_category.isdigit() else None
+
+if st.button("Retour à l'accueil"):
+    st.switch_page("main.py") 
 
 if id_category:
     products = ProductService.get_products_by_category(id_category)
