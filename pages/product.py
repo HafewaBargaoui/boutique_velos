@@ -7,6 +7,9 @@ from utils.style import set_style
 st.set_page_config(page_title="Détail du produit", layout="wide")
 set_style()
 
+if "cart" not in st.session_state:
+    st.session_state.cart = {}
+
 # Récupération de l'ID depuis l'URL
 params = st.query_params
 raw_id = params.get("id", [None])[0]
@@ -55,3 +58,19 @@ with col2:
             <p><strong>Stock :</strong> {product.stock_qty}</p>
         </div>
     """, unsafe_allow_html=True)
+
+    if st.button("Ajouter au panier"):
+        product_id_str = str(product.id_product)
+        if product_id_str in st.session_state.cart:
+            st.session_state.cart[product_id_str]["qty"] += 1
+        else:
+            st.session_state.cart[product_id_str] = {
+                "name": product.name,
+                "price": product.price,
+                "qty": 1
+            }
+        st.success(f"{product.name} a été ajouté au panier.")
+
+    # Bouton vers la page panier
+    if st.button("Voir mon panier"):
+        st.switch_page("pages/cart.py")

@@ -25,7 +25,7 @@ if action == "Gérer les Produits":
                 if st.button("🗑 Supprimer", key=f"del_{prod.id_product}"):
                     ProductAdminService.delete_product(prod.id_product)
                     st.success("Produit supprimé.")
-                    st.experimental_rerun()
+                    st.rerun()
 
     with col2:
         st.subheader("➕ Ajouter ou modifier un produit")
@@ -45,7 +45,7 @@ if action == "Gérer les Produits":
             else:
                 ProductAdminService.add_product(name, description, price, stock, category[0])
                 st.success("Produit ajouté !")
-            st.experimental_rerun()
+            st.rerun()
 
 # --- Commandes ---
 elif action == "Voir les Commandes":
