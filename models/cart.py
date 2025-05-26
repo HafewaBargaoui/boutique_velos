@@ -1,132 +1,126 @@
 import sqlite3
 from datetime import datetime
+import streamlit as st
 
 DB_PATH = "databases/ecommerce.db"
 
 class Cart:
-    """
-    Classe représentant un panier d'achat.
-    Gère les opérations de création, ajout, suppression de produits, et calcul du total.
-    """
-
-    def __init__(self, cart_id=None):
-        """
-        Initialise une instance de panier.
-        Si aucun ID de panier n'est fourni, un nouveau panier est créé automatiquement.
-
-        Args:
-            cart_id (int, optional): ID d'un panier existant. Defaults to None.
-        """
-        self.cart_id = cart_id
-        self.conn = sqlite3.connect(DB_PATH)
-        self.conn.row_factory = sqlite3.Row
-        self.cursor = self.conn.cursor()
-
-        if self.cart_id is None:
-            self.create_cart()
-
-    def create_cart(self):
-        """
-        Crée un nouveau panier dans la base de données avec un total initial de 0.
-        L'attribut `cart_id` est mis à jour avec l'ID nouvellement créé.
-        """
-        self.cursor.execute("INSERT INTO cart (total) VALUES (0)")
-        self.cart_id = self.cursor.lastrowid
-        self.conn.commit()
-
-    def add_product(self, product_id, qty):
-        """
-        Ajoute un produit au panier ou le met à jour s'il existe déjà.
-
-        Args:
-            product_id (int): ID du produit à ajouter.
-            qty (int): Quantité du produit.
-
-        Raises:
-            ValueError: Si le produit n'existe pas dans la base de données.
-        """
-        self.cursor.execute("SELECT price FROM product WHERE Id_product = ?", (product_id,))
-        product = self.cursor.fetchone()
-        if not product:
-            raise ValueError("Produit introuvable")
-
-        price = product["price"]
-        subtotal = round(price * qty, 2)
-
-        self.cursor.execute("""
-            INSERT OR REPLACE INTO cart_item (Id_cart, Id_order, Id_product, subtotal, qty)
-            VALUES (?, NULL, ?, ?, ?)
-        """, (self.cart_id, product_id, str(subtotal), str(qty)))
-
-        self.update_total()
-        self.conn.commit()
-
-    def remove_product(self, product_id):
-        """
-        Supprime un produit du panier.
-
-        Args:
-            product_id (int): ID du produit à retirer.
-        """
-        self.cursor.execute("""
-            DELETE FROM cart_item
-            WHERE Id_cart = ? AND Id_product = ?
-        """, (self.cart_id, product_id))
-        self.update_total()
-        self.conn.commit()
+    def __init__(self):
+        if "cart" not in st.session_state:
+            st.session_state.cart = {}
 
     def get_items(self):
-        """
-        Récupère les articles du panier avec leurs détails.
-
-        Returns:
-            list[sqlite3.Row]: Liste des produits dans le panier (nom, prix, quantité, sous-total).
-        """
-        self.cursor.execute("""
-            SELECT p.name, p.price, ci.qty, ci.subtotal
-            FROM cart_item ci
-            JOIN product p ON p.Id_product = ci.Id_product
-            WHERE ci.Id_cart = ?
-        """, (self.cart_id,))
-        return self.cursor.fetchall()
-
-    def update_total(self):
-        """
-        Recalcule le total du panier à partir des sous-totaux des articles.
-        Met à jour le champ `total` de la table `cart`.
-        """
-        self.cursor.execute("""
-            SELECT SUM(CAST(subtotal AS REAL)) as total
-            FROM cart_item
-            WHERE Id_cart = ?
-        """, (self.cart_id,))
-        result = self.cursor.fetchone()
-        total = result["total"] if result["total"] is not None else 0
-        self.cursor.execute("UPDATE cart SET total = ? WHERE Id_cart = ?", (total, self.cart_id))
-
-    def delete_cart(self):
-        """
-        Supprime complètement le panier et tous ses articles de la base de données.
-        Réinitialise l'attribut `cart_id`.
-        """
-        self.cursor.execute("DELETE FROM cart_item WHERE Id_cart = ?", (self.cart_id,))
-        self.cursor.execute("DELETE FROM cart WHERE Id_cart = ?", (self.cart_id,))
-        self.conn.commit()
-        self.cart_id = None
+        items = []
+        for pid, item in st.session_state.cart.items():
+            subtotal = round(item["price"] * item["qty"], 2)
+            items.append({
+                "id_product": pid,
+                "name": item["name"],
+                "price": item["price"],
+                "qty": item["qty"],
+                "subtotal": subtotal
+            })
+        return items
 
     def get_total(self):
-        """
-        Récupère le total actuel du panier.
+        total = 0
+        for item in st.session_state.cart.values():
+            total += item["price"] * item["qty"]
+        return round(total, 2)
 
-        Returns:
-            float: Montant total du panier.
-        """
-        self.cursor.execute("SELECT total FROM cart WHERE Id_cart = ?", (self.cart_id,))
-        result = self.cursor.fetchone()
-        return result["total"] if result else 0
+    def remove_product(self, product_id):
+        if product_id in st.session_state.cart:
+            del st.session_state.cart[product_id]
 
-    def __del__(self):
+    def clear_cart(self):
+        st.session_state.cart = {}
+
+    def checkout(self):
         """
-        Ferme la connexion à la base de données à la destruction de l'objet.
+        Enregistre la commande dans la base de données.
+        Retourne (success: bool, message: str)
         """
-        self.conn.close()
+        if not st.session_state.cart:
+            return False, "Le panier est vide."
+
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+
+            # Création du panier
+            cursor.execute("INSERT INTO cart (total) VALUES (?)", (0,))
+            cart_id = cursor.lastrowid
+
+            # Création de la commande
+            order_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            status = "pending"
+            shipping_address = "10 rue de test, Paris"
+            total_amount = 0
+            cursor.execute(
+                "INSERT INTO order_ (order_date, status, total_amount, shipping_adress) VALUES (?, ?, ?, ?)",
+                (order_date, status, total_amount, shipping_address)
+            )
+            order_id = cursor.lastrowid
+
+            total = 0
+            for pid_str, item in st.session_state.cart.items():
+                pid = int(pid_str)
+                qty = item["qty"]
+
+                cursor.execute("SELECT price, stock_qty FROM product WHERE Id_product = ?", (pid,))
+                result = cursor.fetchone()
+                if not result:
+                    conn.rollback()
+                    return False, f"Produit avec ID {pid} non trouvé."
+
+                price, stock_qty = result
+
+                if qty > stock_qty:
+                    conn.rollback()
+                    return False, f"Stock insuffisant pour le produit ID {pid}. Stock restant : {stock_qty}, demandé : {qty}"
+
+                subtotal = price * qty
+                total += subtotal
+
+                # Insertion dans cart_item
+                cursor.execute("""
+                    INSERT INTO cart_item (Id_cart, Id_order, Id_product, subtotal, qty)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (cart_id, order_id, pid, str(subtotal), str(qty)))
+
+                # Mise à jour du stock produit
+                new_stock = stock_qty - qty
+                cursor.execute("""
+                    UPDATE product SET stock_qty = ? WHERE Id_product = ?
+                """, (new_stock, pid))
+
+            # Mise à jour des totaux dans cart et order_
+            cursor.execute("UPDATE cart SET total = ? WHERE Id_cart = ?", (total, cart_id))
+            cursor.execute("UPDATE order_ SET total_amount = ? WHERE Id_order = ?", (total, order_id))
+
+            # Informations utilisateur (fictif ici)
+            user_id = 98
+            cursor.execute("INSERT OR IGNORE INTO user_ (Id_user, username, email, password, user_type, vip) VALUES (?, ?, ?, ?, ?, ?)",
+                        (user_id, 'john doe', 'john@example.com', 'hashed_password', 'customer', False))
+
+            cursor.execute("SELECT 1 FROM customer WHERE Id_user = ?", (user_id,))
+            if cursor.fetchone() is None:
+                cursor.execute("INSERT INTO customer (Id_user, address, Id_order, Id_cart) VALUES (?, ?, ?, ?)",
+                            (user_id, shipping_address, order_id, cart_id))
+            else:
+                cursor.execute("UPDATE customer SET address = ?, Id_order = ?, Id_cart = ? WHERE Id_user = ?",
+                            (shipping_address, order_id, cart_id, user_id))
+
+            conn.commit()
+            conn.close()
+
+            self.clear_cart()
+            st.session_state.checkout_ready = False
+
+            return True, "Commande enregistrée avec succès !"
+
+        except Exception as e:
+            if conn:
+                conn.rollback()
+                conn.close()
+            return False, f"Erreur lors de la commande : {e}"
